@@ -1,19 +1,20 @@
 import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
+import {Link,Redirect} from 'react-router-dom';
 import {
   Typography,
   Button,
   Card,
   CardContent,
-  TextField
+  TextField,
+  LinearProgress,
+  withStyles
 } from '@material-ui/core';
 // import {Accounts} from 'meteor/accounts-base';
 import {Meteor} from 'meteor/meteor';
-import jss from 'react-jss';
 import {withFormik,Form} from 'formik';
 import {validateLogin} from '../../helpers/validate';
 
-const styles = {
+const styles = theme => ({
   container: {
     display: 'flex',
     flexDirection: 'column',
@@ -22,24 +23,36 @@ const styles = {
     height: '100vh'
   },
   form: {
-    maxWidth: 600,
-    margin: '20px auto 0'
-  },
-  formItem: {
-    margin: {
-      bottom: 10
+    width: 500,
+    margin: `${theme.spacing.unit * 3}px auto 0`,
+    '@media (max-width: 500px)': {
+      width: '95%'
     }
   },
+  formItem: {
+    marginBottom: theme.spacing.unit
+  },
+  formError: {
+    marginBottom: theme.spacing.unit,
+    textAlign: 'center'
+  },
   controls: {
-    marginTop: 10,
+    marginTop: theme.spacing.unit * 2,
     display: 'flex',
     alignItems: 'flex-start'
+  },
+  createBtn: {
+    display: 'block',
+    width: '100%'
   }
-};
+});
 
 class Login extends Component {
   render() {
-    const {classes, values, touched, errors, handleChange, handleBlur, handleSubmit } = this.props;
+    const {classes, values, touched, errors, handleChange, handleBlur, handleSubmit, status,isSubmitting } = this.props;
+    if(status && status.success) {
+      return <Redirect to="/dashboard"/>;
+    }
     return (
       <div className={classes.container}>
         <Typography variant="display2" align="center">Sign In</Typography>
@@ -70,15 +83,25 @@ class Login extends Component {
                 helperText={touched.password && errors.password}
                 fullWidth
               />
+              {status && status.error &&
+                <Typography
+                  color="error"
+                  className={classes.formError}
+                  variant="headline"
+                >
+                  {status.error}
+                </Typography>
+              }
               <div className={classes.controls}>
                 <Button type="submit" variant="contained" color="primary" fullWidth>Login</Button>
+                {isSubmitting && <LinearProgress/>}
               </div>
               <div className={classes.controls}>
                 <Button variant="text" color="primary">Use Facebook</Button>
                 <Button variant="text" color="primary">Use Github</Button>
               </div>
               <div className={classes.controls}>
-                <Link to="/register">
+                <Link to="/register" className={classes.createBtn}>
                   <Button variant="outlined" fullWidth>
                     Create account
                   </Button>
@@ -95,10 +118,19 @@ class Login extends Component {
 export default withFormik({
   mapPropsToValues: () => ({ email: '', password: '' }),
   validate: validateLogin,
-  handleSubmit: ({email,password}) => {
+  handleSubmit: ({email,password},{setStatus}) => {
     Meteor.loginWithPassword({email},password, err => {
-      console.log(err);
-      console.log('Authorized')
+      if(err) {
+        console.log(err);
+        setStatus({
+          error: err.reason
+        });
+      }
+      else {
+        setStatus({
+          success: true
+        })
+      }
     })
   }
-})(jss(styles)(Login));
+})(withStyles(styles)(Login));

@@ -19,3 +19,4 @@ accounts-password
 qualia:reval
 ecmascript
 react-meteor-data
+dburles:collection-helpers

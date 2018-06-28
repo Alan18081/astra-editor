@@ -9,6 +9,7 @@ import Landing from './components/Landing';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Dashboard from './components/dashboard/Dashboard';
+import OpenProject from './components/projects/OpenProject';
 
 const theme = createMuiTheme({});
 
@@ -19,6 +20,7 @@ const App = ({isAuth}) => (
       {isAuth
         ? <Fragment>
             <Route path="/dashboard" component={Dashboard}/>
+            <Route path="/projects/:id" component={OpenProject}/>
           </Fragment>
         : <Fragment>
             <Route path="/login" component={Login}/>

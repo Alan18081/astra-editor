@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Meteor} from 'meteor/meteor';
-import {Link} from 'react-router-dom';
+import {Link,withRouter} from 'react-router-dom';
 import {
   Avatar,
   Typography,
@@ -9,16 +9,16 @@ import {
   Popover,
   MenuItem,
   ListItemText,
-  ListItemIcon
+  ListItemIcon,
+  withStyles
 } from '@material-ui/core';
 import {withTracker} from 'meteor/react-meteor-data';
-import jss from 'react-jss';
 
 import NotificationIcon from '@material-ui/icons/Notifications';
 import AccountIcon from '@material-ui/icons/AccountCircle';
 import ExitIcon from '@material-ui/icons/ExitToApp';
 
-const styles = {
+const styles = theme => ({
   container: {
     display: 'flex',
     alignItems: 'center'
@@ -27,24 +27,15 @@ const styles = {
     textTransform: 'capitalize',
     display: 'flex',
     alignItems: 'center',
-    margin: {
-      left: 20
-    }
+    marginLeft: theme.spacing.unit * 3
   },
   avatar: {
-    margin: {
-      right: 10
-    }
+    marginRight: theme.spacing.unit
   },
   name: {
     color: '#fff'
-  },
-  menu: {
-    margin: {
-      top: 20
-    }
   }
-};
+});
 
 class UserBlock extends Component {
   state = {
@@ -60,6 +51,10 @@ class UserBlock extends Component {
       anchorEl: null
     });
   };
+  handleLogout = () => {
+    Meteor.logout();
+    this.props.history.push('/login');
+  };
   render() {
     const {classes,user} = this.props;
     let content = null;
@@ -70,7 +65,7 @@ class UserBlock extends Component {
             <NotificationIcon/>
           </Badge>
           <Button className={classes.block} onClick={this.handleMenuOpen}>
-            <Avatar src={user.avatar} className={classes.avatar} />
+            <Avatar src={user.profile.avatar} className={classes.avatar} />
             <Typography className={classes.name} variant="headline">{user.username}</Typography>
           </Button>
           <Popover
@@ -91,7 +86,7 @@ class UserBlock extends Component {
                 <ListItemText>Profile</ListItemText>
               </MenuItem>
             </Link>
-            <MenuItem onClick={() => Meteor.logout()}>
+            <MenuItem onClick={this.handleLogout}>
               <ListItemIcon>
                 <ExitIcon/>
               </ListItemIcon>
@@ -106,5 +101,5 @@ class UserBlock extends Component {
 }
 
 export default withTracker(() => ({
-  user: Meteor.users.findOne(Meteor.userId())
-}))(jss(styles)(UserBlock));
+  user: Meteor.user()
+}))(withStyles(styles)(withRouter(UserBlock)));

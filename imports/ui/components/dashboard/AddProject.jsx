@@ -1,5 +1,5 @@
 import React, {Component,Fragment} from 'react';
-import {withFormik} from 'formik';
+import {withFormik,Form} from 'formik';
 import {Meteor} from 'meteor/meteor';
 import {
   withStyles,
@@ -19,9 +19,6 @@ const styles = theme => ({
     position: 'fixed',
     bottom: 20,
     right: 20
-  },
-  dialog: {
-    width: 300
   }
 });
 
@@ -38,6 +35,18 @@ class AddChannel extends Component {
     this.setState({
       isOpen: true
     });
+  };
+  submit = async event => {
+    event.preventDefault();
+    try {
+      await this.props.handleSubmit(event);
+      this.setState({
+        isOpen: false
+      });
+    }
+    catch(err) {
+      console.log(err);
+    }
   };
   render() {
     const {classes,touched,errors,handleChange,handleBlur,values} = this.props;
@@ -57,27 +66,29 @@ class AddChannel extends Component {
           onClose={this.handleClose}
           className={classes.dialog}
         >
-          <DialogTitle>New project</DialogTitle>
-          <DialogContent>
-            <TextField
-              id="name"
-              label="Name"
-              value={values.name}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              error={errors.name && touched.name}
-              helperText={touched.name && errors.name}
-              fullWidth
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.handleClose}>
-              Close
-            </Button>
-            <Button variant="contained" type="submit" color="primary">
-              Create
-            </Button>
-          </DialogActions>
+          <Form onSubmit={this.submit}>
+            <DialogTitle>New project</DialogTitle>
+            <DialogContent>
+              <TextField
+                id="title"
+                label="Title"
+                value={values.title}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={errors.title && touched.title}
+                helperText={touched.title && errors.title}
+                fullWidth
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={this.handleClose}>
+                Close
+              </Button>
+              <Button variant="contained" type="submit" color="primary">
+                Create
+              </Button>
+            </DialogActions>
+          </Form>
         </Dialog>
       </Fragment>
     )
@@ -85,9 +96,18 @@ class AddChannel extends Component {
 }
 
 export default withFormik({
-  mapPropsToValues: props => ({ name: ''}),
+  mapPropsToValues: props => ({ title: ''}),
   validate: validateProject,
-  handleSubmit: ({name}) => {
-
+  handleSubmit: ({title}) => {
+    return new Promise((resolve,reject) => {
+      Meteor.call('projects.create',title,err => {
+        if(err) {
+          reject(err);
+        }
+        else {
+          resolve();
+        }
+      });
+    });
   }
 })(withStyles(styles)(AddChannel));

@@ -1,18 +1,19 @@
 import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
+import {Link,Redirect} from 'react-router-dom';
 import {
   Typography,
   Button,
   Card,
   CardContent,
-  TextField
+  TextField,
+  withStyles,
+  LinearProgress
 } from '@material-ui/core';
 import {Accounts} from 'meteor/accounts-base';
-import jss from 'react-jss';
 import {withFormik,Form} from 'formik';
 import {validateRegister} from '../../helpers/validate';
 
-const styles = {
+const styles = theme => ({
   container: {
     display: 'flex',
     flexDirection: 'column',
@@ -21,25 +22,40 @@ const styles = {
     height: '100vh'
   },
   form: {
-    maxWidth: 600,
-    margin: '20px auto 0'
+    width: 500,
+    margin: `${theme.spacing.unit * 3}px auto 0`,
+    '@media (max-width: 500px)': {
+      width: '95%'
+    }
+  },
+  formError: {
+    marginBottom: theme.spacing.unit,
+    textAlign: 'center'
   },
   formItem: {
-    margin: {
-      bottom: 10
-    }
+    marginBottom: theme.spacing.unit * 2
   },
   controls: {
     marginTop: 10,
     display: 'flex',
     alignItems: 'flex-start'
+  },
+  btnIcon: {
+    marginRight: theme.spacing.unit,
+    fontSize: 20
+  },
+  loginBtn: {
+    display: 'block',
+    width: '100%'
   }
-};
+});
 
 class Register extends Component {
   render() {
-    const {classes, values, touched, errors, handleChange, handleBlur,handleSubmit } = this.props;
-    console.log(values,errors);
+    const {classes, values, touched, errors, handleChange, handleBlur,status,handleSubmit,isSubmitting}  = this.props;
+    if(status && status.success) {
+      return <Redirect to="/dashboard"/>;
+    }
     return (
       <div className={classes.container}>
         <Typography variant="display2" align="center">Sign Up</Typography>
@@ -93,15 +109,25 @@ class Register extends Component {
                 helperText={touched.confirmPassword && errors.confirmPassword}
                 fullWidth
               />
+              {status && status.error &&
+                <Typography
+                  color="error"
+                  variant="headline"
+                  className={classes.formError}
+                >
+                  {status.error}
+                </Typography>
+              }
               <div className={classes.controls}>
                 <Button type="submit" variant="contained" color="primary" fullWidth>Create account</Button>
+                {isSubmitting && <LinearProgress/>}
               </div>
               <div className={classes.controls}>
                 <Button variant="text" color="primary">Use Facebook</Button>
                 <Button variant="text" color="primary">Use Github</Button>
               </div>
               <div className={classes.controls}>
-                <Link to="/login">
+                <Link to="/login" className={classes.loginBtn}>
                   <Button variant="outlined" fullWidth>
                     Login
                   </Button>
@@ -118,10 +144,22 @@ class Register extends Component {
 export default withFormik({
   mapPropsToValues: () => ({ name: '', email: '', password: '', confirmPassword: '' }),
   validate: validateRegister,
-  handleSubmit: ({name,email,password}) => {
-    Accounts.createUser({username: name, email,password}, err => {
-      console.log(err);
-      console.log('User created');
+  handleSubmit: ({name,email,password},{setStatus}) => {
+    Accounts.createUser({
+      username: name,
+      email,
+      password
+    }, (err) => {
+      if (err) {
+        setStatus({
+          error: err.reason
+        });
+      }
+      else {
+        setStatus({
+          success: true
+        });
+      }
     });
   }
-})(jss(styles)(Register));
+})(withStyles(styles)(Register));

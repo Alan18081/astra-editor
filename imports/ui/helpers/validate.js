@@ -1,4 +1,5 @@
 import * as EmailValidator from 'email-validator';
+import {Meteor} from 'meteor/meteor';
 
 export const validateLogin = ({email,password}) => {
   const errors = {};
@@ -24,6 +25,9 @@ export const validateRegister = ({email,name,password,confirmPassword}) => {
 
   if(!name) {
     errors.name = 'You should provide name';
+  }
+  else if(Meteor.users.findOne({username: name})) {
+    errors.name = 'User with this name is already exists';
   }
 
   if(!email) {
@@ -56,10 +60,10 @@ export const validateRegister = ({email,name,password,confirmPassword}) => {
   return errors;
 };
 
-export const validateProject = ({name}) => {
+export const validateProject = ({title}) => {
   const errors = {};
-  if(!name) {
-    errors.name = 'You should provide name for project';
+  if(!title) {
+    errors.name = 'You should provide title for project';
   }
   return errors;
 };
