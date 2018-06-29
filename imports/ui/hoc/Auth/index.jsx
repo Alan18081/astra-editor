@@ -6,7 +6,7 @@ import {Redirect} from 'react-router-dom';
 export default (ChildComponent) => {
   const AuthComponent = ({isAuth}) => isAuth
     ? <ChildComponent/>
-    : <Redirect to="/login"/>
+    : <Redirect to="/login"/>;
   return withTracker(() => ({
     isAuth: Meteor.userId()
   }))(AuthComponent);

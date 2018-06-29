@@ -5,11 +5,11 @@ import {Meteor} from 'meteor/meteor';
 import {MuiThemeProvider} from '@material-ui/core';
 import {createMuiTheme} from '@material-ui/core/styles';
 
-import Landing from './components/Landing';
-import Login from './components/auth/Login';
-import Register from './components/auth/Register';
-import Dashboard from './components/dashboard/Dashboard';
-import OpenProject from './components/projects/OpenProject';
+import Landing from './components/Landing/index';
+import Login from './components/auth/Login/index';
+import Register from './components/auth/Register/index';
+import Dashboard from './components/dashboard/Dashboard/index';
+import OpenProject from './components/projects/OpenedProject/index';
 
 const theme = createMuiTheme({});
 

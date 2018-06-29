@@ -1,13 +1,9 @@
 import React, {Fragment} from 'react';
 import {withStyles} from '@material-ui/core';
 
-import Header from './dashboard/Header';
+import Header from '../dashboard/Header/index';
 
-const styles = theme => ({
-  content: {
-    margin: theme.spacing.unit * 3,
-  }
-});
+import styles from './styles';
 
 const Layout = ({classes,children}) => (
   <Fragment>

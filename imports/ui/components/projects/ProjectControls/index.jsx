@@ -7,7 +7,9 @@ import {
   withStyles
 } from '@material-ui/core';
 
-import CopyLink from '../CopyLink';
+import CopyLink from '../../CopyLink/index';
+
+import styles from './styles';
 
 const generateFontSizes = (start,end) => {
   let items = [];
@@ -18,21 +20,6 @@ const generateFontSizes = (start,end) => {
   }
   return items;
 };
-
-const styles = theme => ({
-  container: {
-    marginBottom: theme.spacing.unit * 2,
-    display: 'flex'
-  },
-  select: {
-    marginRight: theme.spacing.unit * 2,
-    width: 80
-  },
-  copy: {
-    marginLeft: 'auto'
-  }
-
-});
 
 const ProjectControls = ({classes,fontSize,changeFontSize,theme,changeTheme}) => (
   <div className={classes.container}>

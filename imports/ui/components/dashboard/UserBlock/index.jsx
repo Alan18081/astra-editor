@@ -18,24 +18,7 @@ import NotificationIcon from '@material-ui/icons/Notifications';
 import AccountIcon from '@material-ui/icons/AccountCircle';
 import ExitIcon from '@material-ui/icons/ExitToApp';
 
-const styles = theme => ({
-  container: {
-    display: 'flex',
-    alignItems: 'center'
-  },
-  block: {
-    textTransform: 'capitalize',
-    display: 'flex',
-    alignItems: 'center',
-    marginLeft: theme.spacing.unit * 3
-  },
-  avatar: {
-    marginRight: theme.spacing.unit
-  },
-  name: {
-    color: '#fff'
-  }
-});
+import styles from './styles';
 
 class UserBlock extends Component {
   state = {

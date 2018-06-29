@@ -10,23 +10,13 @@ import {
 } from '@material-ui/core';
 import jss from 'react-jss';
 
-import ProjectControls from './ProjectControls';
-import Layout from '../Layout';
-import Editor from '../Editor';
+import ProjectControls from '../ProjectControls/index';
+import Layout from '../../Layout/index';
+import Editor from '../../editor/Editor/index';
 
-const styles = props => ({
-  loader: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%,-50%)'
-  },
-  dialog: {
-    width: 300
-  }
-});
+import styles from './styles';
 
-class OpenProject extends Component {
+class OpenedProject extends Component {
   state = {
     fontSize: 14,
     authorized: false,
@@ -51,14 +41,6 @@ class OpenProject extends Component {
     this.setState({
       [event.target.name]: event.target.value
     });
-  };
-  handleChangeJavascript = newCode => {
-    this.setState({
-      code: {
-        ...this.state.code,
-        javascript: newCode
-      }
-    })
   };
   joinProject = () => {
     Meteor.call('projects.join',Meteor.userId(),err => {
@@ -89,6 +71,7 @@ class OpenProject extends Component {
           />
           <Editor
             fontSize={this.state.fontSize}
+            projectId={this.props.match.params.id}
           />
           <Dialog
             open={!this.state.authorized}
@@ -110,4 +93,4 @@ class OpenProject extends Component {
   }
 }
 
-export default jss(styles)(OpenProject);
+export default jss(styles)(OpenedProject);

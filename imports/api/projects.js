@@ -2,6 +2,7 @@ import {Mongo} from 'meteor/mongo';
 import {Meteor} from 'meteor/meteor';
 import Schema from 'simpl-schema';
 import moment from 'moment';
+import saveFile from 'save-file';
 
 const Projects = new Mongo.Collection('projects');
 
@@ -74,5 +75,41 @@ Meteor.methods({
       throw new Meteor.Error(403,'unauthorized');
     }
     return Projects.findOne(selector);
+  },
+  'projects.saveCode'(id,type,code) {
+    new Schema({
+      id: {
+        type: String,
+        min: 1
+      },
+      type: {
+        type: String,
+        min: 1
+      },
+      code: {
+        type: String,
+        min: 1
+      }
+    }).validate({id,type,code});
+    Projects.update(id, {
+      $set: {
+        [type]: code
+      }
+    });
+  },
+  'projects.saveFile'(filename = 'index',ext,code) {
+    new Schema({
+      ext: {
+        type: String,
+        min: 1
+      },
+      code: {
+        type: String,
+        min: 1
+      }
+    }).validate({ext,code});
+    saveFile(code,`${filename}.${ext}`,err => {
+      if(err) throw new Meteor.Error(err.message);
+    });
   }
 });

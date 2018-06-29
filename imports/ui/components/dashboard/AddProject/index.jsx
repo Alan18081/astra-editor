@@ -10,17 +10,11 @@ import {
   DialogTitle,
   Button
 } from '@material-ui/core';
-import {validateProject} from '../../helpers/validate';
+import {validateProject} from '../../../helpers/validate';
 
 import AddIcon from '@material-ui/icons/Add';
 
-const styles = theme => ({
-  btn: {
-    position: 'fixed',
-    bottom: 20,
-    right: 20
-  }
-});
+import styles from './styles';
 
 class AddChannel extends Component {
   state = {

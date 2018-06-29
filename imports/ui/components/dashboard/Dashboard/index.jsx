@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import {withTracker} from 'meteor/react-meteor-data';
-import Projects from '../../../api/projects';
+import Projects from '../../../../api/projects';
 
-import Layout from '../Layout';
-import ProjectsList from '../projects/ProjectsList';
-import AddProject from './AddProject';
+import Layout from '../../Layout/index';
+import ProjectsList from '../../projects/ProjectsList/index';
+import AddProject from '../AddProject/index';
 
 
 class Dashboard extends Component {

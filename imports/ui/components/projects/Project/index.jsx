@@ -21,19 +21,7 @@ import PeopleIcon from '@material-ui/icons/People';
 import MessageIcon from '@material-ui/icons/Message';
 import CodeIcon from '@material-ui/icons/Code';
 
-const styles = theme => ({
-  container: {
-    marginBottom: theme.spacing.unit * 3
-  },
-  head: {
-    marginBottom: theme.spacing.unit * 2,
-    display: 'flex',
-    alignItems: 'center'
-  },
-  caption: {
-    flexGrow: 1
-  }
-});
+import styles from './styles';
 
 class Project extends Component {
   state = {

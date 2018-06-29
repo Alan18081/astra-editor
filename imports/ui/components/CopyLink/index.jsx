@@ -2,12 +2,7 @@ import React, {Component} from 'react';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import {Button,withStyles} from '@material-ui/core';
 import LinkIcon from '@material-ui/icons/Link';
-
-const styles = theme => ({
-  btnIcon: {
-    marginRight: theme.spacing.unit
-  }
-});
+import styles from './styles';
 
 class CopyLink extends Component {
   state = {

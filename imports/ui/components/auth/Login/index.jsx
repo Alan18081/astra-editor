@@ -9,43 +9,11 @@ import {
   LinearProgress,
   withStyles
 } from '@material-ui/core';
-// import {Accounts} from 'meteor/accounts-base';
 import {Meteor} from 'meteor/meteor';
 import {withFormik,Form} from 'formik';
-import {validateLogin} from '../../helpers/validate';
+import {validateLogin} from '../../../helpers/validate';
 
-const styles = theme => ({
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100vh'
-  },
-  form: {
-    width: 500,
-    margin: `${theme.spacing.unit * 3}px auto 0`,
-    '@media (max-width: 500px)': {
-      width: '95%'
-    }
-  },
-  formItem: {
-    marginBottom: theme.spacing.unit
-  },
-  formError: {
-    marginBottom: theme.spacing.unit,
-    textAlign: 'center'
-  },
-  controls: {
-    marginTop: theme.spacing.unit * 2,
-    display: 'flex',
-    alignItems: 'flex-start'
-  },
-  createBtn: {
-    display: 'block',
-    width: '100%'
-  }
-});
+import styles from './styles';
 
 class Login extends Component {
   render() {

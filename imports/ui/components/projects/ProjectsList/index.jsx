@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Project from './Project';
+import Project from '../Project/index';
 
 export default ({projects}) => (
   <div>
