@@ -8,9 +8,11 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.0.0-beta.51",
+    "@emmetio/codemirror-plugin": "^0.5.4",
     "@material-ui/core": "^1.2.3",
     "@material-ui/icons": "^1.1.0",
     "email-validator": "^2.0.4",
+    "emmet-codemirror": "^1.2.5",
     "formik": "^0.11.11",
     "isemail": "^3.1.2",
     "meteor-node-stubs": "^0.4.1",
@@ -25,6 +27,7 @@
     "react-popper": "^1.0.0",
     "react-router-dom": "^4.3.1",
     "simpl-schema": "^1.5.0",
+    "syntax-error": "^1.4.0",
     "validator": "^10.4.0",
     "yup": "^0.25.1"
   },

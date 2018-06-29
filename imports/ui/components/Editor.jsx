@@ -3,7 +3,15 @@ import CodeMirror from 'react-codemirror';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/xml/xml';
 import 'codemirror/mode/css/css';
+import 'codemirror/addon/hint/html-hint';
+import 'codemirror/addon/hint/css-hint';
+import 'codemirror/addon/hint/javascript-hint';
+import 'codemirror/addon/edit/closebrackets.js';
+import 'codemirror/addon/edit/closetag.js';
+import 'codemirror/addon/edit/matchbrackets.js';
+import 'codemirror/addon/edit/matchtags.js';
 import {Paper,Grid,withStyles} from '@material-ui/core';
+import check from 'syntax-error';
 
 const handleEval = code => {
   try {
@@ -39,21 +47,33 @@ class Editor extends Component {
   state = {
     html: '',
     css: '',
-    javascript: ''
+    javascript: '',
+    defaultEditorOptions: {
+      smartIndent: true,
+      lineNumbers: true,
+      autoCloseBrackets: true,
+      autoCloseTags: true,
+      matchTags: true,
+      matchBrackets: true
+    }
   };
   frame = React.createRef();
+  jsEditor = React.createRef();
+  componentDidMount() {
+    this.frameHead = this.frame.current.contentDocument.head;
+    this.frameBody = this.frame.current.contentDocument.body;
+  }
   handleChangeHtml = newCode => {
     this.setState({
       html: newCode
     });
-    this.frame.current.contentDocument.body.innerHTML = newCode;
+    this.frameBody.innerHTML = newCode;
   };
   handleChangeCss = newCode => {
     this.setState({
       css: newCode
     });
-    const iframeHead = this.frame.current.contentDocument.head;
-    const currentStyle = iframeHead
+    const currentStyle = this.frameHead
       .getElementsByTagName('style')[0];
     if(currentStyle) {
       currentStyle.innerHTML = newCode;
@@ -61,22 +81,24 @@ class Editor extends Component {
     else {
       const style = document.createElement('style');
       style.innerHTML = newCode;
-      this.frame.current.contentDocument.head.appendChild(style);
+      this.frameHead.appendChild(style);
     }
   };
   handleChangeJavascript = newCode => {
     this.setState({
       javascript: newCode
     });
-    const f = new Function(newCode);
-    try {
-      f();
-    }
-    catch(err) {
-      
-    }
-    finally {
-      f();
+    const err = check(newCode);
+    if(!err) {
+      const currentScript = this.frameBody.getElementsByTagName('script')[0];
+      const template = `function main() {  ${newCode} }`;
+      if (currentScript) {
+        this.frameBody.removeChild(currentScript);
+      }
+      const script = document.createElement('script');
+      script.textContent = template;
+      this.frameBody.appendChild(script);
+      this.frame.current.contentWindow.main();
     }
   };
   render() {
@@ -84,48 +106,46 @@ class Editor extends Component {
     return (
       <div>
         <Paper className={classes.frameWrapper}>
-          <iframe ref={this.frame} className={classes.frame}></iframe>
+          <iframe ref={this.frame} className={classes.frame} id="active-content"></iframe>
         </Paper>
         <Grid container className={classes.row}>
-          <Grid item md={4} className={classes.column}>
+          <Grid item md={4} sm={12} className={classes.column}>
             <Paper>
               <CodeMirror
                 value={this.state.html}
                 onChange={this.handleChangeHtml}
                 options={{
+                  ...this.state.defaultEditorOptions,
                   mode: 'xml',
-                  smartIndent: true,
-                  lineNumbers: true,
                   allowDropFileTypes: ['text/html']
                 }}
                 className={classes.editor}
               />
             </Paper>
           </Grid>
-          <Grid item md={4} className={classes.column}>
+          <Grid item md={4} sm={12} className={classes.column}>
             <Paper>
               <CodeMirror
                 value={this.state.css}
                 onChange={this.handleChangeCss}
                 options={{
+                  ...this.state.defaultEditorOptions,
                   mode: 'css',
-                  smartIndent: true,
-                  lineNumbers: true,
                   allowDropFileTypes: ['text/css']
                 }}
                 className={classes.editor}
               />
             </Paper>
           </Grid>
-          <Grid item md={4} className={classes.column}>
+          <Grid item md={4} sm={12} className={classes.column}>
             <Paper>
               <CodeMirror
+                name="jsEditor"
                 value={this.state.javascript}
                 onChange={this.handleChangeJavascript}
                 options={{
+                  ...this.state.defaultEditorOptions,
                   mode: 'javascript',
-                  smartIndent: true,
-                  lineNumbers: true,
                   allowDropFileTypes: [
                     'application/javascript',
                     'application/x-javascript',
