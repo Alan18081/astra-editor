@@ -26,7 +26,7 @@ class EditorPage extends Component {
   state = {
     anchorEl: null,
     saving: false,
-    saved: false,
+    snackOpened: null,
     filenameChoosing: false
   };
   handleMenuOpen = event => {
@@ -42,12 +42,13 @@ class EditorPage extends Component {
   handleSave = (editor,event) => {
     if(event.ctrlKey && event.key === 's') {
       event.preventDefault();
+      const {projectId,type,code} = this.props;
       this.setState({
         saving: true
       });
       Meteor.call(
         'projects.saveCode',
-        this.props.projectId,this.props.type,this.props.code,
+        projectId,type,code,
         err => {
           this.setState({
             saving: false
@@ -57,7 +58,7 @@ class EditorPage extends Component {
           }
           else {
             this.setState({
-              saved: true
+              snackOpened: 'Code successfully saved'
             });
           }
         }
@@ -66,7 +67,7 @@ class EditorPage extends Component {
   };
   handleSnackClose = () => {
     this.setState({
-      saved: false
+      snackOpened: null
     });
   };
   handleDownloadFile = (filename = this.props.prevName) => {
@@ -91,21 +92,25 @@ class EditorPage extends Component {
     const {classes,options,mode,fileTypes,handleChange,code} = this.props;
     const {anchorEl, saving} = this.state;
     return (
-      <Grid item md={4} sm={12} xs={12} className={classes.column}>
+      <Grid item md={6} sm={12} xs={12} className={classes.column}>
         <Snackbar
           anchorOrigin={{
             vertical: 'bottom',
             horizontal: 'right',
           }}
-          open={this.state.saved}
+          open={Boolean(this.state.snackOpened)}
           autoHideDuration={2000}
           onClose={this.handleSnackClose}
           ContentProps={{
             'aria-describedby': 'message-id',
           }}
-          message={<span id="message-id">Code successfully saved</span>}
+          message={<span id="message-id">{this.state.snackOpened}</span>}
         />
-        <FilenameForm open={this.state.filenameChoosing} save={this.handleDownloadFile}/>
+        <FilenameForm
+          open={this.state.filenameChoosing}
+          save={this.handleDownloadFile}
+          close={this.handleSnackClose}
+        />
         <IconButton onClick={this.handleMenuOpen} className={classes.settings}>
           <SettingsIcon/>
         </IconButton>

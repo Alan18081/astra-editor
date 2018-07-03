@@ -67,3 +67,11 @@ export const validateProject = ({title}) => {
   }
   return errors;
 };
+
+export const validateFilename = ({name}) => {
+  const errors = {};
+  if(!name) {
+    errors.name = 'You should provide name for your file';
+  }
+  return errors;
+};

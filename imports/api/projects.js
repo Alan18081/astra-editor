@@ -4,7 +4,12 @@ import Schema from 'simpl-schema';
 import moment from 'moment';
 import saveFile from 'save-file';
 
-const Projects = new Mongo.Collection('projects');
+const Projects = new Mongo.Collection('projects', {
+  transform(project) {
+    project.participants = project.participants.map(id => Meteor.users.findOne(id));
+    return project;
+  }
+});
 
 if(Meteor.isServer) {
   Meteor.publish('projects', function() {
@@ -18,13 +23,14 @@ if(Meteor.isServer) {
   });
 }
 
-export default Projects;
+// Projects.helpers({
+//   participants() {
+//     console.log(this.participants);
+//     return this.participants.map(id => Meteor.users.findOne(id));
+//   }
+// });
 
-Projects.helpers({
-  participants() {
-    return this.participants.map(id => Meteor.users.findOne(id));
-  }
-});
+export default Projects;
 
 Meteor.methods({
   'projects.create'(title) {
@@ -58,15 +64,11 @@ Meteor.methods({
       projectId: {
         type: String,
         min: 1
-      },
-      userId: {
-        type: String,
-        min: 1
       }
-    }).validate({projectId,userId});
+    }).validate({projectId});
     Projects.update(projectId,{
-      $push: {
-        participants: userId
+      $addToSet: {
+        participants: Meteor.userId()
       }
     });
   },
@@ -108,8 +110,41 @@ Meteor.methods({
         min: 1
       }
     }).validate({ext,code});
-    saveFile(code,`${filename}.${ext}`,err => {
+    let finalName = filename;
+    const extReg = new RegExp(`.${ext}`);
+    if(!filename.find(extReg)) {
+      finalName = `${filename}.${ext}`;
+    }
+    saveFile(code,finalName,err => {
       if(err) throw new Meteor.Error(err.message);
+    });
+  },
+  'projects.sendMessage'(id,text) {
+    if(!Meteor.userId()) {
+      throw new Meteor.Error(403,'unauthorized');
+    }
+    new Schema({
+      id: {
+        type: String,
+        min: 1
+      },
+      text: {
+        type: String,
+        min: 1
+      }
+    });
+    const sender = Meteor.user();
+    const message = {
+      text,
+      sender: {
+        avatar: sender.profile.avatar,
+        username: sender.username,
+        _id: sender._id
+      },
+      sentAt: moment().valueOf()
+    };
+    Projects.update(id,{
+      $push: {messages: message}
     });
   }
 });

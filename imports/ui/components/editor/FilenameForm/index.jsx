@@ -1,18 +1,20 @@
 import React, {Component} from 'react';
-import {Dialog,DialogTitle,DialogContent,TextField,DialogActions} from '@material-ui/core';
+import {Dialog,DialogTitle,DialogContent,TextField,DialogActions,Button} from '@material-ui/core';
 import {withFormik,Form} from 'formik';
+import {validateFilename} from '../../../helpers/validate';
 
 class FilenameForm extends Component {
   submit = async event => {
     event.preventDefault();
     this.props.save(this.props.values.name);
+    this.props.close();
   };
   render() {
-    const {values,handleChange,handleBlur,errors,touched} = this.props;
+    const {values,handleChange,handleBlur,errors,touched,close} = this.props;
     return (
       <Dialog
         open={this.props.open}
-        onClose={this.handleClose}
+        onClose={close}
         aria-labelledby="form-dialog-title"
       >
         <DialogTitle id="form-dialog-title">File name</DialogTitle>
@@ -30,10 +32,10 @@ class FilenameForm extends Component {
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={this.handleClose} color="primary">
+            <Button onClick={close} color="primary">
               Cancel
             </Button>
-            <Button onClick={this.handleClose} color="primary" variant="contained">
+            <Button type="submit" color="primary" variant="contained">
               Save
             </Button>
           </DialogActions>
@@ -46,5 +48,6 @@ class FilenameForm extends Component {
 export default withFormik({
   mapPropsToValues: () => ({
     name: ''
-  })
+  }),
+  validate: validateFilename
 })(FilenameForm);

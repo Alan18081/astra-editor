@@ -16,6 +16,19 @@ import {validateLogin} from '../../../helpers/validate';
 import styles from './styles';
 
 class Login extends Component {
+  loginWithGoogle = () => {
+    Meteor.loginWithGoogle({
+      scope: ['openid','profile'],
+      response_type: 'token'
+    }, err => {
+      if(err) {
+
+      }
+      else {
+        this.props.history.replace('/dashboard');
+      }
+    })
+  };
   render() {
     const {classes, values, touched, errors, handleChange, handleBlur, handleSubmit, status,isSubmitting } = this.props;
     if(status && status.success) {
@@ -65,8 +78,20 @@ class Login extends Component {
                 {isSubmitting && <LinearProgress/>}
               </div>
               <div className={classes.controls}>
-                <Button variant="text" color="primary">Use Facebook</Button>
-                <Button variant="text" color="primary">Use Github</Button>
+                <Button
+                  variant="text"
+                  color="primary"
+                  onClick={this.loginWithGoogle}
+                >
+                  Use Google
+                </Button>
+                <Button
+                  variant="text"
+                  color="primary"
+                  onClick={this.loginWithGithub}
+                >
+                  Use Github
+                </Button>
               </div>
               <div className={classes.controls}>
                 <Link to="/register" className={classes.createBtn}>

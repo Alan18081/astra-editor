@@ -1,5 +1,7 @@
 import React, {Component,Fragment} from 'react';
 import {Meteor} from 'meteor/meteor';
+import Projects from '../../../../api/projects';
+import {withTracker} from 'meteor/react-meteor-data';
 import {
   CircularProgress,
   withStyles,
@@ -19,23 +21,18 @@ import styles from './styles';
 class OpenedProject extends Component {
   state = {
     fontSize: 14,
-    authorized: false,
-    project: null
+    authorized: false
   };
-  componentDidMount() {
-    Meteor.call('projects.findOne',{_id: this.props.match.params.id}, (err,project) => {
-      if(err) {
-
+  static getDerivedStateFromProps({project},state) {
+    const userId = Meteor.userId();
+    if (project) {
+      const authorized = !!project.participants.find(({_id}) => _id === userId);
+      return {
+        ...state,
+        authorized
       }
-      else if(project) {
-        const authorized = project.participants.find(id => id === Meteor.userId());
-        this.setState({
-          authorized: !!authorized,
-          project
-        });
-      }
-    });
-
+    }
+    return state;
   }
   handleChange = event => {
     this.setState({
@@ -43,7 +40,7 @@ class OpenedProject extends Component {
     });
   };
   joinProject = () => {
-    Meteor.call('projects.join',Meteor.userId(),err => {
+    Meteor.call('projects.join',this.props.match.params.id,Meteor.userId(),err => {
       if(err) {
 
       }
@@ -55,8 +52,7 @@ class OpenedProject extends Component {
     });
   };
   render() {
-    const {project} = this.state;
-    const {classes} = this.props;
+    const {classes,project} = this.props;
     let content = (
       <div className={classes.loader}>
         <CircularProgress size={100}/>
@@ -65,32 +61,44 @@ class OpenedProject extends Component {
     if(project) {
       content = (
         <Fragment>
-          <ProjectControls
-            fontSize={this.state.fontSize}
-            changeFontSize={this.handleChange}
-          />
+          {/*<ProjectControls*/}
+            {/*fontSize={this.state.fontSize}*/}
+            {/*changeFontSize={this.handleChange}*/}
+          {/*/>*/}
           <Editor
             fontSize={this.state.fontSize}
-            projectId={this.props.match.params.id}
+            project={project}
           />
-          <Dialog
-            open={!this.state.authorized}
-            className={classes.dialog}
-          >
-            <DialogTitle>{project.title}</DialogTitle>
-            <DialogContent>
-              <Button onClick={this.joinProject} variant="contained" color="primary" fullWidth>Join</Button>
-            </DialogContent>
-          </Dialog>
         </Fragment>
       );
     }
     return (
       <Layout>
         {content}
+        {/*<Dialog*/}
+          {/*open={!this.state.authorized}*/}
+          {/*className={classes.dialog}*/}
+        {/*>*/}
+          {/*<DialogTitle>Join project</DialogTitle>*/}
+          {/*<DialogContent>*/}
+            {/*<Button onClick={this.joinProject} variant="contained" color="primary" fullWidth>Join</Button>*/}
+          {/*</DialogContent>*/}
+        {/*</Dialog>*/}
       </Layout>
     );
   }
 }
 
-export default jss(styles)(OpenedProject);
+export default withTracker(({match}) => {
+  Meteor.subscribe('projects');
+  Meteor.subscribe('users');
+  const project = Projects.findOne(match.params.id);
+  if(project) {
+    return {
+      project,
+      found: true
+    }
+  }
+  return {};
+
+})(jss(styles)(OpenedProject));

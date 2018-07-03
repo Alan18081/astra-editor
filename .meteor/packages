@@ -20,3 +20,5 @@ qualia:reval
 ecmascript
 react-meteor-data
 dburles:collection-helpers
+emmerge:graviton
+accounts-google

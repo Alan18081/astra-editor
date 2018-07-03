@@ -6,7 +6,6 @@ import Layout from '../../Layout/index';
 import ProjectsList from '../../projects/ProjectsList/index';
 import AddProject from '../AddProject/index';
 
-
 class Dashboard extends Component {
   state = {
     foundProjects: []
@@ -26,6 +25,7 @@ class Dashboard extends Component {
 
 export default withTracker(() => {
   Meteor.subscribe('projects');
+  Meteor.subscribe('users');
   return {
     projects: Projects.find().fetch()
   }

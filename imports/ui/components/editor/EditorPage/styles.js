@@ -1,9 +1,7 @@
 export default ({spacing: {unit},breakpoints}) => ({
   column: {
     padding: `0 ${unit}px 0`,
-    [breakpoints.down('sm')]: {
-      marginBottom: unit * 2
-    },
+    marginBottom: unit * 2,
     position: 'relative'
   },
   editor: {
@@ -17,6 +15,7 @@ export default ({spacing: {unit},breakpoints}) => ({
   settings: {
     position: 'absolute',
     top: 0,
-    right: unit
+    right: unit,
+    zIndex: 10
   }
 })

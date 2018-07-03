@@ -16,6 +16,8 @@ import {
 } from '@material-ui/core';
 import moment from 'moment';
 import {Meteor} from 'meteor/meteor';
+import Projects from '../../../../api/projects';
+import {withTracker} from 'meteor/react-meteor-data';
 
 import PeopleIcon from '@material-ui/icons/People';
 import MessageIcon from '@material-ui/icons/Message';
@@ -50,8 +52,9 @@ class Project extends Component {
     const {
       classes,
       project: {
-        _id,title,lastVisited,lines,messages
+        _id,title,lastVisited,lines,messages,participants
       }} = this.props;
+    console.log(this.props.project);
     return (
       <Link to={`/projects/${_id}`}>
         <Card className={classes.container}>
@@ -63,32 +66,32 @@ class Project extends Component {
                   Last visited {moment(lastVisited).fromNow()}
                 </Typography>
               </div>
-              <div>
-                <IconButton onClick={this.handleMenuOpen}>
-                  <PeopleIcon/>
-                </IconButton>
-                <Popover
-                  id="simple-menu"
-                  anchorEl={this.state.anchorEl}
-                  open={Boolean(this.state.anchorEl)}
-                  onClose={this.handleMenuClose}
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right',
-                  }}
-                >
-                  <List>
-                    {this.state.participants.map(({username,profile: {avatar}}) => (
-                      <ListItem onClick={this.handleClose}>
-                        <ListItemAvatar>
-                          <Avatar src={avatar}/>
-                        </ListItemAvatar>
-                        <ListItemText>{username}</ListItemText>
-                      </ListItem>
-                    ))}
-                  </List>
-                </Popover>
-              </div>
+              {/*<div>*/}
+                {/*<IconButton onClick={this.handleMenuOpen}>*/}
+                  {/*<PeopleIcon/>*/}
+                {/*</IconButton>*/}
+                {/*<Popover*/}
+                  {/*id="simple-menu"*/}
+                  {/*anchorEl={this.state.anchorEl}*/}
+                  {/*open={Boolean(this.state.anchorEl)}*/}
+                  {/*onClose={this.handleMenuClose}*/}
+                  {/*anchorOrigin={{*/}
+                    {/*vertical: 'bottom',*/}
+                    {/*horizontal: 'right',*/}
+                  {/*}}*/}
+                {/*>*/}
+                  {/*<List>*/}
+                    {/*{participants.map(({username,profile: {avatar}}) => (*/}
+                      {/*<ListItem onClick={this.handleClose}>*/}
+                        {/*<ListItemAvatar>*/}
+                          {/*<Avatar src={avatar}/>*/}
+                        {/*</ListItemAvatar>*/}
+                        {/*<ListItemText>{username}</ListItemText>*/}
+                      {/*</ListItem>*/}
+                    {/*))}*/}
+                  {/*</List>*/}
+                {/*</Popover>*/}
+              {/*</div>*/}
             </div>
             <List>
               <ListItem>

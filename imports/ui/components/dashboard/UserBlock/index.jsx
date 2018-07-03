@@ -35,8 +35,9 @@ class UserBlock extends Component {
     });
   };
   handleLogout = () => {
-    Meteor.logout();
-    this.props.history.push('/login');
+    Meteor.logout(() => {
+      this.props.history.push('/login');
+    });
   };
   render() {
     const {classes,user} = this.props;
@@ -48,7 +49,7 @@ class UserBlock extends Component {
             <NotificationIcon/>
           </Badge>
           <Button className={classes.block} onClick={this.handleMenuOpen}>
-            <Avatar src={user.profile.avatar} className={classes.avatar} />
+            <Avatar src={user.avatar} className={classes.avatar} />
             <Typography className={classes.name} variant="headline">{user.username}</Typography>
           </Button>
           <Popover

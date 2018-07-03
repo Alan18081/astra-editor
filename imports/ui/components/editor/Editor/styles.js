@@ -5,12 +5,15 @@ export default ({spacing: {unit}}) => ({
   },
   frame: {
     width: '100%',
-    height: '50vh',
+    height: 300,
     border: 'none',
     resize: 'vertical',
-    cursor: 'row-resize'
+    cursor: 'row-resize',
   },
   frameWrapper: {
-    marginBottom: unit * 2
+    marginBottom: unit * 2,
   },
+  frameGrid: {
+    padding: `0 ${unit}px 0`
+  }
 });
